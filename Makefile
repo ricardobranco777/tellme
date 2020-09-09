@@ -1,3 +1,3 @@
 test:
-	@flake8
-	@pylint *.py
+	@flake8 tellme
+	@pylint tellme

@@ -75,7 +75,8 @@ def print_info():
         for flavor in info[version]:
             print(flavor)
             for job, data in info[version][flavor].items():
-                print("%s\t%s\t%s%s" % (job, data['status'], BASE_URL, data['url']))
+                print("%s\t%s\t%s%s" % (
+                    job, data['status'], BASE_URL, data['url']))
             print()
         print()
 
