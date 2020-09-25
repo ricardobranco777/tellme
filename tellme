@@ -51,7 +51,9 @@ def parse_opts():
     parser.add_argument('-a', '--all', action='store_true',
                         help="Also show passed tests")
     parser.add_argument('-d', '--date', default='today', type=date,
-                        help="Show results for date in YYYYMMDD format")
+                        help="Show results for date: YYYYMMDD | today | yesterday")
+    parser.add_argument('-s', '--status', action='append',
+                        help="Filter by status. May be specified multiple times")
     parser.add_argument('-V', '--version', action='store_true',
                         help="Show version and exit")
     return parser.parse_args()
@@ -76,7 +78,8 @@ def get_info(version, run):
                 status = status[3][len("result_"):]
             elif status[1].startswith("state_"):
                 status = status[1][len("state_"):]
-            if not opts.all and status in {'passed', 'softfailed'}:
+            if not opts.all and status in {'passed', 'softfailed'} or \
+                    opts.status and status not in opts.status:
                 continue
             url = row.find('a', href=True)['href'][len("/tests/"):]
             info[run][version][flavor][job] = {'url': url, 'status': status}
@@ -99,6 +102,9 @@ def print_info():
 
 if __name__ == "__main__":
     opts = parse_opts()
+    if opts.status:
+        opts.all = True
+        opts.status = set(opts.status)  # Need for speed
     if opts.version:
         print(__version__)
         sys.exit(0)
