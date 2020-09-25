@@ -7,8 +7,9 @@ import argparse
 import sys
 
 from concurrent.futures import ThreadPoolExecutor
-from urllib.request import urlopen
+from itertools import product
 from time import strftime
+from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
 
@@ -20,12 +21,13 @@ GROUP_ID = {
 }
 FLAVORS = ('SAP-DVD-Updates', 'Server-DVD-HA-Updates')
 BASE_URL = 'https://openqa.suse.de/tests/'
-URL = BASE_URL + 'overview?distri=sle&version=%s&build=%s-1&groupid=%s'
+URL = BASE_URL + 'overview?distri=sle&version=%s&build=%s-%d&groupid=%s'
+RUNS = (1, 2)
 
-info = {}
+info = {1: {}, 2: {}}
 
 
-def parse_args():
+def parse_opts():
     """
     Parse options and arguments
     """
@@ -37,18 +39,18 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_info(version):
+def get_info(version, run):
     """
     Get the information for a particular SLE version
     """
-    url = URL % (version, strftime("%Y%m%d"), GROUP_ID[version])
+    url = URL % (version, strftime("%Y%m%d"), run, GROUP_ID[version])
     with urlopen(url) as conn:
         soup = BeautifulSoup(conn.read(), 'html.parser')
-    info[version] = {}
+    info[run][version] = {}
     for flavor in FLAVORS:
         table = soup.find('table', id="results_%s" % flavor)
         rows = table.find_all('tr')[1:]
-        info[version][flavor] = {}
+        info[run][version][flavor] = {}
         for row in rows:
             job = row.find('td', {'class': "name"}).span.text
             status = row.find('i', {'class': "status"})['class']
@@ -56,36 +58,34 @@ def get_info(version):
                 status = status[3][len("result_"):]
             elif status[1].startswith("state_"):
                 status = status[1][len("state_"):]
-            if not args.all and status in {'passed', 'softfailed'}:
+            if not opts.all and status in {'passed', 'softfailed'}:
                 continue
             url = row.find('a', href=True)['href'][len("/tests/"):]
-            info[version][flavor][job] = {'url': url, 'status': status}
-        if not info[version][flavor]:
-            del info[version][flavor]
-    if not info[version]:
-        del info[version]
+            info[run][version][flavor][job] = {'url': url, 'status': status}
 
 
 def print_info():
     """
     Print information
     """
-    for version in info:
-        print(version)
-        for flavor in info[version]:
-            print(flavor)
-            for job, data in info[version][flavor].items():
-                print("%s\t%s\t%s%s" % (
-                    job, data['status'], BASE_URL, data['url']))
-            print()
-        print()
+    for run in RUNS:
+        for version in info[run]:
+            for flavor in info[run][version]:
+                if not info[run][version][flavor]:
+                    continue
+                for job, data in info[run][version][flavor].items():
+                    print("%-4s %8s\t%25s\t%50s\t%20s\t%s%s" % (
+                        run, version, flavor, job,
+                        data['status'], BASE_URL, data['url']))
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    if args.version:
+    opts = parse_opts()
+    if opts.version:
         print(__version__)
         sys.exit(0)
+    print("%-4s %8s\t%25s\t%50s\t%20s\t%s" % (
+        "RUN", "VERSION", "FLAVOR", "JOB", "STATUS", "URL"))
     with ThreadPoolExecutor() as executor:
-        executor.map(get_info, GROUP_ID)
+        executor.map(lambda args: get_info(*args), product(GROUP_ID, RUNS))
     print_info()
