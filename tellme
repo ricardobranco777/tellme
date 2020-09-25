@@ -33,6 +33,8 @@ def date(string):
     """
     try:
         when = datetime.strptime(string, "%Y%m%d")
+        if when > datetime.now():
+            raise argparse.ArgumentTypeError("Back to the future?")
     except ValueError:
         if string == "today":
             when = datetime.now()
