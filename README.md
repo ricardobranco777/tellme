@@ -11,7 +11,7 @@ Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 
 ```
   -a, --all             Also show passed tests
-  -d DATE, --date DATE  Show results for date: YYYYMMDD | today | yesterday
+  -d DATE, --date DATE  Show results for date: [[[CC]YY]MM]DD | today | yesterday | -<DAYS AGO>
   -s STATUS STATUS, --status STATUS STATUS
                         Filter by status. May be specified multiple times
   -V, --version         Show version and exit

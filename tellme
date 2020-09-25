@@ -29,20 +29,36 @@ info = {1: {}, 2: {}}
 
 def date(string):
     """
-    Check date option
+    Check date option: [[[CC]YY]MM]DD | today | yesterday | -<DAYS AGO>
     """
+    fmt = "%Y%m%d"
+    now = datetime.now()
+    if string.isdigit() and len(string) < 8:
+        # Allow specifying shorter dates
+        if len(string) == 6:
+            # Missing century
+            string = "%s%s" % (str(now.year)[:-2], string)
+        elif len(string) >= 3:
+            # Missing year
+            string = "%s%s" % (now.year, string)
+        else:
+            # Missing year & month
+            string = "%s%s%s" % (now.year, now.month, string)
     try:
-        when = datetime.strptime(string, "%Y%m%d")
-        if when > datetime.now():
+        when = datetime.strptime(string, fmt)
+        if when > now:
             raise argparse.ArgumentTypeError("Back to the future?")
     except ValueError:
         if string == "today":
-            when = datetime.now()
+            when = now
         elif string == "yesterday":
-            when = datetime.now() - timedelta(days=1)
+            when = now - timedelta(days=1)
         else:
-            raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | today | yesterday")
-    return when.strftime("%Y%m%d")
+            try:
+                when = now + timedelta(days=int(string))
+            except ValueError:
+                raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | today | yesterday | -<DAYS AGO>")
+    return when.strftime(fmt)
 
 
 def parse_opts():
@@ -53,7 +69,7 @@ def parse_opts():
     parser.add_argument('-a', '--all', action='store_true',
                         help="Also show passed tests")
     parser.add_argument('-d', '--date', default='today', type=date,
-                        help="Show results for date: YYYYMMDD | today | yesterday")
+                        help="Show results for date: [[[CC]YY]MM]DD | today | yesterday | -<DAYS AGO>")
     parser.add_argument('-s', '--status', action='append',
                         help="Filter by status. May be specified multiple times")
     parser.add_argument('-V', '--version', action='store_true',
