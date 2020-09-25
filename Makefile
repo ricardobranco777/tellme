@@ -1,3 +1,3 @@
 test:
-	@flake8 tellme
 	@pylint tellme
+	@flake8 tellme --ignore=E501

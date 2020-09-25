@@ -11,5 +11,6 @@ Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 
 ```
 ./tellme [-a]
-  -a, --all      Also show passed tests
+  -a, --all             Also show passed tests
+  -d DATE, --date DATE  Show results for date: YYYYMMDD | today | yesterday
 ```

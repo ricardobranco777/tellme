@@ -7,8 +7,8 @@ import argparse
 import sys
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta
 from itertools import product
-from time import strftime
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
@@ -27,6 +27,22 @@ RUNS = (1, 2)
 info = {1: {}, 2: {}}
 
 
+def date(string):
+    """
+    Check date option
+    """
+    try:
+        when = datetime.strptime(string, "%Y%m%d")
+    except ValueError:
+        if string == "today":
+            when = datetime.now()
+        elif string == "yesterday":
+            when = datetime.now() - timedelta(days=1)
+        else:
+            raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | today | yesterday")
+    return when.strftime("%Y%m%d")
+
+
 def parse_opts():
     """
     Parse options and arguments
@@ -34,6 +50,8 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--all', action='store_true',
                         help="Also show passed tests")
+    parser.add_argument('-d', '--date', default='today', type=date,
+                        help="Show results for date in YYYYMMDD format")
     parser.add_argument('-V', '--version', action='store_true',
                         help="Show version and exit")
     return parser.parse_args()
@@ -43,7 +61,7 @@ def get_info(version, run):
     """
     Get the information for a particular SLE version
     """
-    url = URL % (version, strftime("%Y%m%d"), run, GROUP_ID[version])
+    url = URL % (version, opts.date, run, GROUP_ID[version])
     with urlopen(url) as conn:
         soup = BeautifulSoup(conn.read(), 'html.parser')
     info[run][version] = {}
