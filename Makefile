@@ -1,3 +1,3 @@
 test:
-	@pylint tellme --disable=line-too-long
+	@pylint tellme
 	@flake8 tellme --ignore=E501

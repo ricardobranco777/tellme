@@ -30,11 +30,11 @@ info = {1: {}, 2: {}}
 
 def date(string):
     """
-    Check date option: [[[CC]YY]MM]DD | today | yesterday | -<DAYS AGO>
+    Check date option: [[[CC]YY]MM]DD | -<DAYS AGO>
     """
     fmt = "%Y%m%d"
     now = datetime.now()
-    if string.isdigit() and len(string) < 8:
+    if string.isdigit() and len(string) > 1:
         # Allow specifying shorter dates
         if len(string) == 6:
             # Missing century
@@ -50,15 +50,10 @@ def date(string):
         if when > now:
             raise argparse.ArgumentTypeError("Back to the future?")
     except ValueError:
-        if string == "today":
-            when = now
-        elif string == "yesterday":
-            when = now - timedelta(days=1)
-        else:
-            try:
-                when = now + timedelta(days=int(string))
-            except ValueError:
-                raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | today | yesterday | -<DAYS AGO>")
+        try:
+            when = now + timedelta(days=int(string))
+        except ValueError:
+            raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | -<DAYS AGO>")
     return when.strftime(fmt)
 
 
@@ -69,8 +64,8 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--all', action='store_true',
                         help="Also show passed tests")
-    parser.add_argument('-d', '--date', default='today', type=date,
-                        help="Show results for date: [[[CC]YY]MM]DD | today | yesterday | -<DAYS AGO>")
+    parser.add_argument('-d', '--date', default='0', type=date,
+                        help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
     parser.add_argument('-s', '--status', action='append',
                         help="Filter by status. May be specified multiple times")
     parser.add_argument('-V', '--version', action='store_true',
