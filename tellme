@@ -25,7 +25,7 @@ BASE_URL = 'https://openqa.suse.de/tests/'
 URL = BASE_URL + 'overview?distri=sle&version=%s&build=%s-%d&groupid=%s'
 RUNS = (1, 2)
 
-info = {1: {}, 2: {}}
+info = {k: {} for k in RUNS}
 
 
 def date(string):
