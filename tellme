@@ -34,17 +34,16 @@ def date(string):
     """
     fmt = "%Y%m%d"
     now = datetime.now()
-    if string.isdigit() and len(string) > 1:
-        # Allow specifying shorter dates
-        if len(string) == 6:
+    if string.isdigit() and int(string) > 0:
+        if len(string) < 3:
+            # Missing year & month
+            string = "%s%02d%02d" % (now.year, now.month, int(string))
+        elif len(string) < 5:
+            # Missing year
+            string = "%s%02d" % (now.year, int(string))
+        elif len(string) < 7:
             # Missing century
             string = "%s%s" % (str(now.year)[:-2], string)
-        elif len(string) >= 3:
-            # Missing year
-            string = "%s%s" % (now.year, string)
-        else:
-            # Missing year & month
-            string = "%s%s%s" % (now.year, now.month, string)
     try:
         when = datetime.strptime(string, fmt)
         if when > now:
