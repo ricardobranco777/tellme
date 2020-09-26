@@ -115,12 +115,11 @@ def print_info():
 
 if __name__ == "__main__":
     opts = parse_opts()
-    if opts.status:
-        opts.all = True
-        opts.status = set(opts.status)  # Need for speed
     if opts.version:
         print(__version__)
         sys.exit(0)
+    if opts.status:
+        opts.all = True
     # Check if host is accessible
     try:
         urlopen("https://openqa.suse.de/favicon.ico")
