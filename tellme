@@ -34,7 +34,10 @@ STATUSES = (
     'timeout_exceeded', 'unknown', 'uploading',
     'user_cancelled', 'user_restarted')
 
-info = {k: {} for k in RUNS}
+info = {run: {version: {flavor: {}
+        for flavor in FLAVORS}
+        for version in GROUP_ID}
+        for run in RUNS}
 
 
 def date(string):
@@ -95,11 +98,9 @@ def get_info(version, run):
     url = URL % (version, opts.date, run, GROUP_ID[version])
     with urlopen(url, context=ctx) as conn:
         soup = BeautifulSoup(conn.read(), 'html.parser')
-    info[run][version] = {}
     for flavor in FLAVORS:
         table = soup.find('table', id="results_%s" % flavor)
         rows = table.find_all('tr')[1:]
-        info[run][version][flavor] = {}
         for row in rows:
             job = row.find('td', {'class': "name"}).span.text
             status = row.find('i', {'class': "status"})['class']
