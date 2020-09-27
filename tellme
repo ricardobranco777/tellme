@@ -27,9 +27,11 @@ RUNS = (1, 2)
 
 # https://github.com/os-autoinst/openQA/blob/master/assets/stylesheets/test-details.scss
 STATUSES = (
-    'blocked', 'cancelled', 'failed', 'incomplete', 'none', 'obsoleted',
-    'parallel_failed', 'parallel_restarted', 'passed', 'scheduled', 'skipped',
-    'softfailed', 'timeout_exceeded', 'unknown', 'uploading', 'user_cancelled', 'user_restarted')
+    'blocked', 'cancelled', 'failed', 'incomplete', 'none',
+    'obsoleted', 'parallel_failed', 'parallel_restarted',
+    'passed', 'scheduled', 'skipped', 'softfailed',
+    'timeout_exceeded', 'unknown', 'uploading',
+    'user_cancelled', 'user_restarted')
 
 info = {k: {} for k in RUNS}
 
@@ -58,7 +60,7 @@ def date(string):
         try:
             when = now + timedelta(days=int(string))
         except ValueError:
-            raise argparse.ArgumentTypeError("Valid dates: YYYYMMDD | -<DAYS AGO>")
+            raise argparse.ArgumentTypeError("Invalid date")
     return when.strftime(fmt)
 
 
@@ -67,14 +69,18 @@ def parse_opts():
     Parse options and arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--all', action='store_true',
-                        help="Show all tests. Ignored if --status option is used")
-    parser.add_argument('-d', '--date', default='0', type=date,
-                        help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
-    parser.add_argument('-s', '--status', action='append', choices=STATUSES,
-                        help="Filter by status. May be specified multiple times")
-    parser.add_argument('-V', '--version', action='store_true',
-                        help="Show version and exit")
+    parser.add_argument(
+        '-a', '--all', action='store_true',
+        help="Show all tests. Ignored if --status option is used")
+    parser.add_argument(
+        '-d', '--date', default='0', type=date,
+        help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
+    parser.add_argument(
+        '-s', '--status', action='append', choices=STATUSES,
+        help="Filter by status. May be specified multiple times")
+    parser.add_argument(
+        '-V', '--version', action='store_true',
+        help="Show version and exit")
     return parser.parse_args()
 
 
