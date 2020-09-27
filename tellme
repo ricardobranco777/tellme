@@ -136,7 +136,6 @@ if __name__ == "__main__":
         sys.exit(0)
     if opts.status:
         opts.all = True
-    # Do not check SSL certificate
     ctx = ssl.create_default_context()
     if opts.insecure:
         ctx.check_hostname = False
