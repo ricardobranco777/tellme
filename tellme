@@ -15,7 +15,7 @@ from urllib.error import HTTPError, URLError
 
 from bs4 import BeautifulSoup
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 GROUP_ID = {
     '12-SP2': 54, '12-SP3': 108, '12-SP4': 218, '12-SP5': 280,
