@@ -17,4 +17,4 @@ ENV	PYTHONUNBUFFERED 1
 WORKDIR	/user
 
 USER	user
-ENTRYPOINT ["/usr/local/bin/python3", "/tellme"]
+ENTRYPOINT ["/usr/local/bin/python3", "/tellme", "--insecure"]

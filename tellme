@@ -4,6 +4,7 @@ Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 """
 
 import argparse
+import ssl
 import sys
 
 from concurrent.futures import ThreadPoolExecutor
@@ -76,6 +77,9 @@ def parse_opts():
         '-d', '--date', default='0', type=date,
         help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
     parser.add_argument(
+        '-k', '--insecure', action='store_true',
+        help="Allow insecure server connections when using SSL")
+    parser.add_argument(
         '-s', '--status', action='append', choices=STATUSES,
         help="Filter by status. May be specified multiple times")
     parser.add_argument(
@@ -89,7 +93,7 @@ def get_info(version, run):
     Get the information for a particular SLE version
     """
     url = URL % (version, opts.date, run, GROUP_ID[version])
-    with urlopen(url) as conn:
+    with urlopen(url, context=ctx) as conn:
         soup = BeautifulSoup(conn.read(), 'html.parser')
     info[run][version] = {}
     for flavor in FLAVORS:
@@ -132,9 +136,14 @@ if __name__ == "__main__":
         sys.exit(0)
     if opts.status:
         opts.all = True
+    # Do not check SSL certificate
+    ctx = ssl.create_default_context()
+    if opts.insecure:
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
     # Check if host is accessible
     try:
-        urlopen("https://openqa.suse.de/favicon.ico")
+        urlopen("https://openqa.suse.de/favicon.ico", context=ctx)
     except (HTTPError, URLError) as err:
         print("ERROR: %s" % err.reason, file=sys.stderr)
         sys.exit(1)
