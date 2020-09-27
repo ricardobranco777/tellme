@@ -7,15 +7,17 @@ RUN	apk add --no-cache tzdata && \
 
 RUN	adduser -D user -h /user
 
-COPY	*.py /
+COPY	tellme /
 RUN	python -OO -m compileall && \
 	python -OO -m compileall /*.py
 
+COPY	SUSE_Trust_Root.crt /usr/local/share/ca-certificates/
+RUN	update-ca-certificates
+
 ENV     PYTHONPATH /
 ENV	PYTHONUNBUFFERED 1
-ENV	DBUS_SESSION_BUS_ADDRESS /dev/null
 
 WORKDIR	/user
 
 USER	user
-ENTRYPOINT ["/usr/local/bin/python3", "/tellme.py"]
+ENTRYPOINT ["/usr/local/bin/python3", "/tellme"]
