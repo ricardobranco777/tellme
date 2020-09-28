@@ -5,7 +5,7 @@ Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 ## Requirements
 
 - Python 3
-- Beautiful Soup (run `pip3 install --user bs4`)
+- Beautiful Soup (install `python3-beautifulsoup4` package or run `pip3 install --user bs4`)
 
 ## Options
 
