@@ -12,6 +12,7 @@ Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 ```
   -a, --all             Show all tests. Ignored if --status option is used
   -d DATE, --date DATE  Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>
+  -H, --no-header       Do not show header
   -k, --insecure        Allow insecure server connections when using SSL
   -s STATUS, , --status STATUS
 			Filter by status. May be specified multiple times
