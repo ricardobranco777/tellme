@@ -126,7 +126,7 @@ def print_info():
                     continue
                 for job, data in info[run][version][flavor].items():
                     url = BASE_URL + data['url']
-                    print(HEADER % (run, version, flavor, job, data['status'], url))
+                    print(FORMAT % (run, version, flavor, job, data['status'], url))
 
 
 if __name__ == "__main__":
@@ -146,8 +146,8 @@ if __name__ == "__main__":
     except (HTTPError, URLError) as err:
         print("ERROR: %s" % err.reason, file=sys.stderr)
         sys.exit(1)
-    HEADER = "%-4s %-8s\t%-20s\t%-45s\t%-20s\t%s"
-    print(HEADER % ("RUN", "VERSION", "FLAVOR", "JOB", "STATUS", "URL"))
+    FORMAT = "%-4s %-8s\t%-20s\t%-45s\t%-20s\t%s"
+    print(FORMAT % ("RUN", "VERSION", "FLAVOR", "JOB", "STATUS", "URL"))
     with ThreadPoolExecutor() as executor:
         executor.map(lambda args: get_info(*args), product(GROUP_ID, RUNS))
     print_info()
