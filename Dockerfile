@@ -8,8 +8,7 @@ RUN	apk add --no-cache tzdata && \
 RUN	adduser -D user -h /user
 
 COPY	tellme /
-RUN	python -OO -m compileall && \
-	python -OO -m compileall /*.py
+RUN	python -OO -m compileall
 
 ENV     PYTHONPATH /
 ENV	PYTHONUNBUFFERED 1
