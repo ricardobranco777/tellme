@@ -107,10 +107,10 @@ def get_info(version, run):
         for row in rows:
             job = row.find('td', {'class': "name"}).span.text
             status = row.find('i', {'class': "status"})['class']
-            if status[3].startswith("result_"):
-                status = status[3][len("result_"):]
-            elif status[1].startswith("state_"):
+            if status[1].startswith("state_"):
                 status = status[1][len("state_"):]
+            elif status[3].startswith("result_"):
+                status = status[3][len("result_"):]
             if not opts.all and status in {'passed', 'softfailed'} or \
                     opts.status and status not in opts.status:
                 continue
@@ -122,6 +122,14 @@ def print_info():
     """
     Print information
     """
+    job_width = max(len(job)
+                    for run in RUNS
+                    for version in info[run]
+                    for flavor in info[run][version]
+                    for job in info[run][version][flavor])
+    fmt = "%-4s %-8s\t%-20s\t%-*s  %-20s  %s"
+    if not opts.no_header:
+        print(fmt % ("RUN", "VERSION", "FLAVOR", job_width, "JOB", "STATUS", "URL"))
     for run in RUNS:
         for version in info[run]:
             for flavor in info[run][version]:
@@ -129,7 +137,7 @@ def print_info():
                     continue
                 for job, data in info[run][version][flavor].items():
                     url = BASE_URL + data['url']
-                    print(FORMAT % (run, version, flavor, job, data['status'], url))
+                    print(fmt % (run, version, flavor, job_width, job, data['status'], url))
 
 
 if __name__ == "__main__":
@@ -149,9 +157,6 @@ if __name__ == "__main__":
     except (HTTPError, URLError) as err:
         print("ERROR: %s" % err.reason, file=sys.stderr)
         sys.exit(1)
-    FORMAT = "%-4s %-8s\t%-20s\t%-45s\t%-20s\t%s"
-    if not opts.no_header:
-        print(FORMAT % ("RUN", "VERSION", "FLAVOR", "JOB", "STATUS", "URL"))
     with ThreadPoolExecutor() as executor:
         executor.map(lambda args: get_info(*args), product(GROUP_ID, RUNS))
     print_info()
