@@ -104,6 +104,7 @@ def get_info(version, run):
             soup = BeautifulSoup(conn.read(), 'html.parser')
     except (HTTPError, URLError) as err:
         print("ERROR: %s: %s" % (url, err.reason), file=sys.stderr)
+        return
     for flavor in FLAVORS:
         table = soup.find('table', id="results_%s" % flavor)
         rows = table.find_all('tr')[1:]
