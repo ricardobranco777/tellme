@@ -2,6 +2,8 @@
 
 Get information from o.s.d Maintenance: Test Repo specific for SAP & HA
 
+[![Build Status](https://travis-ci.org/ricardobranco777/tellme.svg?branch=master)](https://travis-ci.org/ricardobranco777/tellme)
+
 ## Requirements
 
 - Python 3
