@@ -83,6 +83,9 @@ def parse_opts():
         '-H', '--no-header', action='store_true',
         help="Do not show header")
     parser.add_argument(
+        '-i', '--invert', action='store_true',
+        help="Invert the sense of matching with --status option")
+    parser.add_argument(
         '-k', '--insecure', action='store_true',
         help="Allow insecure server connections when using SSL")
     parser.add_argument(
@@ -151,6 +154,10 @@ if __name__ == "__main__":
         sys.exit(0)
     if opts.status:
         opts.all = True
+        opts.status = set(opts.status)
+        if opts.invert:
+            opts.status = set(STATUSES) - opts.status
+            print(opts.status)
     ctx = ssl.create_default_context()
     if opts.insecure:
         ctx.check_hostname = False

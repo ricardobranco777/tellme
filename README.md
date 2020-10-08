@@ -15,6 +15,7 @@ Get information from openqa.suse.de `Maintenance: Test Repo` specific for SAP & 
   -a, --all             Show all tests. Ignored if --status option is used
   -d DATE, --date DATE  Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>
   -H, --no-header       Do not show header
+  -i, --invert          Invert the sense of matching with --status option
   -k, --insecure        Allow insecure server connections when using SSL
   -s STATUS, , --status STATUS
 			Filter by status. May be specified multiple times
