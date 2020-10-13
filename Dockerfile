@@ -1,14 +1,15 @@
-FROM	python:3.8-alpine
+FROM	python:3.9-alpine
 
 COPY    requirements.txt /tmp
 
 RUN	apk add --no-cache tzdata && \
-        pip install --no-cache-dir -r /tmp/requirements.txt
+        pip install --no-cache-dir -r /tmp/requirements.txt && \
+	python -OO -m compileall && \
+	ln -s /usr/local/bin/python3 /usr/bin
 
 RUN	adduser -D user -h /user
 
 COPY	tellme /
-RUN	python -OO -m compileall
 
 ENV     PYTHONPATH /
 ENV	PYTHONUNBUFFERED 1
