@@ -9,9 +9,10 @@ Get information from openqa.suse.de `Maintenance: Test Repo` specific for SAP & 
 - Python 3
 - Beautiful Soup (install `python3-beautifulsoup4` package or run `pip3 install --user bs4`)
 
-## Options
+## Usage
 
 ```
+  tellme [OPTIONS] [DATE}
   -a, --all             Show all tests. Ignored if --status option is used
   -d DATE, --date DATE  Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>
   -H, --no-header       Do not show header
@@ -22,4 +23,12 @@ Get information from openqa.suse.de `Maintenance: Test Repo` specific for SAP & 
   Choices for STATUS:
 	blocked cancelled failed incomplete none obsoleted parallel_failed parallel_restarted passed
 	scheduled skipped softfailed timeout_exceeded unknown uploading user_cancelled user_restarted
+
+  DATE format: [[[CC]YY]MM]DD | -<DAYS AGO>
 ```
+
+## Examples:
+
+Show results for yesterday:
+
+`tellme -1`

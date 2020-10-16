@@ -77,9 +77,6 @@ def parse_opts():
         '-a', '--all', action='store_true',
         help="Show all tests. Ignored if --status option is used")
     parser.add_argument(
-        '-d', '--date', default='0', type=date,
-        help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
-    parser.add_argument(
         '-H', '--no-header', action='store_true',
         help="Do not show header")
     parser.add_argument(
@@ -94,6 +91,9 @@ def parse_opts():
     parser.add_argument(
         '-V', '--version', action='store_true',
         help="Show version and exit")
+    parser.add_argument(
+        'date', default='0', type=date, nargs='?',
+        help="Show results for date: [[[CC]YY]MM]DD | -<DAYS AGO>")
     return parser.parse_args()
 
 
