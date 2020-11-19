@@ -129,11 +129,14 @@ def print_info():
     """
     Print information
     """
-    job_width = max(len(job)
-                    for run in RUNS
-                    for version in info[run]
-                    for flavor in info[run][version]
-                    for job in info[run][version][flavor])
+    jobs = [
+        job for run in RUNS
+        for version in info[run]
+        for flavor in info[run][version]
+        for job in info[run][version][flavor]]
+    if not jobs:
+        sys.exit(0)
+    job_width = max(len(job) for job in jobs)
     fmt = "%-4s %-8s\t%-20s\t%-*s  %-20s  %s"
     if not opts.no_header:
         print(fmt % ("RUN", "VERSION", "FLAVOR", job_width, "JOB", "STATUS", "URL"))
